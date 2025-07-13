@@ -18,7 +18,7 @@
         <img id="sky03" src="images/nature-sphere.jpg">
 
         <!-- GLTF работает -->
-        <a-asset-item id="divan" src="models/divan/gltf/divan.gltf"></a-asset-item>
+        <!-- <a-asset-item id="divan" src="models/divan/gltf/divan.gltf"></a-asset-item> -->
 
         <!-- OBJ работает -->
         <!-- <a-asset-item id="divan-obj" src="models/divan/obj/divan.obj"></a-asset-item>
@@ -36,13 +36,16 @@
       <a-cylinder position="-1 0.75 -3" radius="0.5" height="1.5" rotation="90 0 0" color="#FFC65D"></a-cylinder> -->
       <!-- <a-plane position="0 0 0" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane> -->
 
-      <a-sky src="#sky03"></a-sky>
+      <a-sky src="#sky03" rotation="0 -90 0"></a-sky>
       <!-- <a-sky color="#ececec"></a-sky> -->
 
       <!-- <a-torus-knot color="#B84A39" position="-1 0.75 -3" arc="180" p="2" q="7" radius="5"
         radius-tubular="0.1"></a-torus-knot>
       <a-dodecahedron color="#B84A39" position="5 1.25 -5"></a-dodecahedron>
       <a-text color="#000000" position="0 2 -4" value="Hello, World!"></a-text> -->
+
+      <a-entity camera="" position="0 1.6 4" wasd-controls=""
+        look-controls="reverseMouseDrag: true; reverseTouchDrag: true" aframe-injected=""></a-entity>
 
     </a-scene>
   </body>
