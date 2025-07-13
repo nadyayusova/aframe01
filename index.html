@@ -17,15 +17,15 @@
         <!-- <img id="sky02" src="images/nature-panorama.jpeg"> -->
         <img id="sky03" src="images/nature-sphere.jpg">
 
-        <!-- GLTF работает -->
-        <!-- <a-asset-item id="divan" src="models/divan/gltf/divan.gltf"></a-asset-item> -->
+        <!-- GLTF модель -->
+        <a-asset-item id="divan2" src="models/divan/gltf2/divan.gltf"></a-asset-item>
 
-        <!-- OBJ работает -->
+        <!-- OBJ модель -->
         <!-- <a-asset-item id="divan-obj" src="models/divan/obj/divan.obj"></a-asset-item>
         <a-asset-item id="divan-mtl" src="models/divan/obj/divan.mtl"></a-asset-item> -->
       </a-assets>
 
-      <!-- <a-gltf-model rotation="-90 180 90" position="0 0 0" src="#divan"></a-gltf-model> -->
+      <a-gltf-model rotation="0 -90 0" position="0 0 0" src="#divan2"></a-gltf-model>
       <!-- <a-obj-model rotation="0 -90 0" position="0 0.5 0" src="#divan-obj" mtl="#divan-mtl"></a-obj-model> -->
 
       <!-- <a-box position="-1 3 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
@@ -34,18 +34,39 @@
         <a-ring position="-1 1 0" color="#FFC65D"></a-ring>
       </a-sphere>
       <a-cylinder position="-1 0.75 -3" radius="0.5" height="1.5" rotation="90 0 0" color="#FFC65D"></a-cylinder> -->
-      <!-- <a-plane position="0 0 0" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane> -->
-
-      <a-sky src="#sky03" rotation="0 -90 0"></a-sky>
-      <!-- <a-sky color="#ececec"></a-sky> -->
-
       <!-- <a-torus-knot color="#B84A39" position="-1 0.75 -3" arc="180" p="2" q="7" radius="5"
         radius-tubular="0.1"></a-torus-knot>
       <a-dodecahedron color="#B84A39" position="5 1.25 -5"></a-dodecahedron>
       <a-text color="#000000" position="0 2 -4" value="Hello, World!"></a-text> -->
 
-      <a-entity camera="" position="0 1.6 4" wasd-controls="" look-controls="reverseMouseDrag: true"
-        aframe-injected=""></a-entity>
+      <!-- Пляж -->
+      <!-- <a-sky src="#sky03" rotation="0 -90 0"></a-sky> -->
+      <a-sky color="#ececec"></a-sky>
+
+      <!-- Сцена с диваном -->
+      <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
+
+      <a-sphere position="4 0.5 0" radius="0.5" color="#ff0000" title="красный"></a-sphere>
+      <a-sphere position="-4 0.5 0" radius="0.5" color="#00ff00" title="зеленый"></a-sphere>
+      <a-sphere position="0 0.5 -4" radius="0.5" color="#0000ff" title="синий"></a-sphere>
+      <a-sphere position="0 0.5 4" radius="0.5" color="#ffff00" title="желтый"></a-sphere>
+
+      <a-entity rotation="0 0 0" position="0 2.5 8" title="на желтый">
+        <a-entity camera="active: true" wasd-controls="" look-controls="reverseMouseDrag: true"
+          aframe-injected=""></a-entity>
+      </a-entity>
+      <a-entity rotation="0 90 0" position="8 2.5 0" title="на красный">
+        <a-entity camera="active: false" wasd-controls="" look-controls="reverseMouseDrag: true"
+          aframe-injected=""></a-entity>
+      </a-entity>
+      <a-entity rotation="0 180 0" position="0 2.5 -8" title="на синий">
+        <a-entity camera="active: false" wasd-controls="" look-controls="reverseMouseDrag: true"
+          aframe-injected=""></a-entity>
+      </a-entity>
+      <a-entity rotation="0 -90 0" position="-8 2.5 0" title="на зеленый">
+        <a-entity camera="active: false" wasd-controls="" look-controls="reverseMouseDrag: true"
+          aframe-injected=""></a-entity>
+      </a-entity>
 
     </a-scene>
   </body>
