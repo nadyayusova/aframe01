@@ -11,7 +11,7 @@
   </head>
 
   <body>
-    <a-scene>
+    <a-scene loading-screen="enabled: true; dotsColor: red; backgroundColor: black">
       <a-assets>
         <!-- <img id="sky01" src="images/sky01.jpeg"> -->
         <!-- <img id="sky02" src="images/nature-panorama.jpeg"> -->
@@ -46,7 +46,7 @@
       <!-- Сцена с диваном -->
       <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
 
-      <a-entity id="helpers" position="0 0 0" visible="false">
+      <a-entity id="helpers" position="0 0 0" visible="true">
         <a-plane rotation="0 0 0" width="20" height="20" material="color: yellow; opacity: 0.1" side="double"></a-plane>
         <a-plane rotation="0 90 0" width="20" height="20" material="color: red; opacity: 0.1" side="double"></a-plane>
         <a-plane rotation="90 0 0" width="20" height="20" material="color: blue; opacity: 0.1" side="double"></a-plane>
@@ -61,7 +61,7 @@
           color="blue"></a-cone>
       </a-entity>
 
-      <a-sphere position="4 0.5 0" radius="0.5" color="#ff0000" title="красный"></a-sphere>
+      <a-sphere position="4 0.5 0" radius="0.5" color="#ff0000" title="красный" opacity="0.5"></a-sphere>
       <a-sphere position="-4 0.5 0" radius="0.5" color="#00ff00" title="зеленый"></a-sphere>
       <a-sphere position="0 0.5 -4" radius="0.5" color="#0000ff" title="синий"></a-sphere>
       <a-sphere position="0 0.5 4" radius="0.5" color="#ffff00" title="желтый"></a-sphere>
@@ -82,7 +82,7 @@
         <a-entity camera="active: false" wasd-controls="acceleration: 40"
           look-controls="reverseMouseDrag: true"></a-entity>
       </a-entity> -->
-      <a-camera user-height="1.6"></a-camera>
+      <a-camera user-height="1.6" look-controls="pointerLockEnabled:true;"></a-camera>
 
       <!-- <a-entity text="value: Press enter to start; color: #BBB" position="0 2 -3" scale="4 4 4"></a-entity> -->
     </a-scene>
