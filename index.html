@@ -11,42 +11,113 @@
   </head>
 
   <body>
-    <a-scene loading-screen="enabled: true; dotsColor: red; backgroundColor: black">
+    <script>
+      // компонент для поворота камеры клавишами wasd и стрелками
+      AFRAME.registerComponent('wasd-rotate', {
+        schema: {
+          enabled: {type: 'boolean', default: true},
+          speed: {type: 'number', default: 3} // градусов в секунду
+        },
+
+        init() {
+          this.keys = {};
+          this.yaw = null;
+          this.pitch = null;
+
+          this.onKeyDown = this.onKeyDown.bind(this);
+          this.onKeyUp = this.onKeyUp.bind(this);
+
+          window.addEventListener('keydown', this.onKeyDown);
+          window.addEventListener('keyup', this.onKeyUp);
+        },
+
+        remove() {
+          window.removeEventListener('keydown', this.onKeyDown);
+          window.removeEventListener('keyup', this.onKeyUp);
+        },
+
+        onKeyDown(evt) {
+          if (!this.data.enabled) return;
+          const code = evt.code;
+          const allowed = ['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+          if (allowed.includes(code)) {
+            this.keys[code] = true;
+            evt.preventDefault();
+          }
+        },
+
+        onKeyUp(evt) {
+          const code = evt.code;
+          if (this.keys[code]) {
+            delete this.keys[code];
+            evt.preventDefault();
+          }
+        },
+
+        tick(time, delta) {
+          if (!this.data.enabled || Object.keys(this.keys).length === 0) return;
+
+          // Получаем доступ к yaw и pitch один раз
+          if (!this.yaw || !this.pitch) {
+            const lookControls = this.el.components['look-controls'];
+            if (!lookControls) return;
+
+            this.yaw = lookControls.yawObject.rotation;
+            this.pitch = lookControls.pitchObject.rotation;
+          }
+
+          const degPerMs = this.data.speed / 1000;
+          const dRot = degPerMs * delta;
+
+          // Вращение по Y (влево/вправо)
+          if (this.keys['KeyA'] || this.keys['ArrowLeft']) this.yaw.y += dRot;
+          if (this.keys['KeyD'] || this.keys['ArrowRight']) this.yaw.y -= dRot;
+
+          // Вращение по X (вверх/вниз)
+          if (this.keys['KeyW'] || this.keys['ArrowUp']) this.pitch.x += dRot;
+          if (this.keys['KeyS'] || this.keys['ArrowDown']) this.pitch.x -= dRot;
+
+          // Ограничение наклона (pitch)
+          const maxPitch = THREE.MathUtils.degToRad(85);
+          this.pitch.x = Math.max(-maxPitch, Math.min(maxPitch, this.pitch.x));
+        }
+      });
+    </script>
+
+    <!-- <a-scene loading-screen="enabled: true; dotsColor: red; backgroundColor: black"> -->
+    <a-scene cursor="rayOrigin: mouse;" raycaster="objects: .clickable">
+      <!-- cursor__mouse="rayOrigin: mouse"
+          cursor__xrselect="rayOrigin: xrselect"
+          raycaster="objects:#objects *;" -->
+
       <a-assets>
-        <!-- <img id="sky01" src="images/sky01.jpeg"> -->
-        <!-- <img id="sky02" src="images/nature-panorama.jpeg"> -->
-        <img id="sky03" src="images/nature-sphere.jpg">
 
         <!-- GLTF модель -->
-        <a-asset-item id="divan2" src="models/divan/gltf2/divan.gltf"></a-asset-item>
+        <a-asset-item id="room" src="models/room/room.gltf"></a-asset-item>
 
-        <!-- OBJ модель -->
-        <!-- <a-asset-item id="divan-obj" src="models/divan/obj/divan.obj"></a-asset-item>
-        <a-asset-item id="divan-mtl" src="models/divan/obj/divan.mtl"></a-asset-item> -->
+        <!-- Загрузка несуществующей модели - видно прелоадер -->
+        <!-- <a-asset-item id="" src="models/big_model/scene.gltf"></a-asset-item> -->
+
+        <!-- Текстуры -->
+        <img id="hotpoint" src="images/hotpoint.svg">
+        <img id="sky" src="images/clear-sunny-sky.jpg">
+
       </a-assets>
 
-      <a-gltf-model rotation="0 -90 0" position="0 0 0" src="#divan2"></a-gltf-model>
-      <!-- <a-obj-model rotation="0 -90 0" position="0 0.5 0" src="#divan-obj" mtl="#divan-mtl"></a-obj-model> -->
+      <!-- <a-gltf-model rotation="0 0 0" position="0 0 0" src="#room"></a-gltf-model> -->
 
-      <!-- <a-box position="-1 3 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <a-sphere position="0 1.25 -7" radius="1.25" color="#EF2D5E">
-        <a-ring position="1 1 0" color="#FFC65D"></a-ring>
-        <a-ring position="-1 1 0" color="#FFC65D"></a-ring>
-      </a-sphere>
-      <a-cylinder position="-1 0.75 -3" radius="0.5" height="1.5" rotation="90 0 0" color="#FFC65D"></a-cylinder> -->
-      <!-- <a-torus-knot color="#B84A39" position="-1 0.75 -3" arc="180" p="2" q="7" radius="5"
-        radius-tubular="0.1"></a-torus-knot>
-      <a-dodecahedron color="#B84A39" position="5 1.25 -5"></a-dodecahedron>
-      <a-text color="#000000" position="0 2 -4" value="Hello, World!"></a-text> -->
+      <a-sky src="#sky"></a-sky>
 
-      <!-- Пляж -->
-      <!-- <a-sky src="#sky03" rotation="0 -90 0"></a-sky> -->
-      <a-sky color="#ececec"></a-sky>
+      <!-- Пол -->
+      <a-plane position="0 -0.01 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
 
-      <!-- Сцена с диваном -->
-      <a-plane position="0 0 0" rotation="-90 0 0" width="10" height="10" color="#7BC8A4"></a-plane>
+      <!-- Активные точки для перехода (надо сделать сферы) -->
+      <a-image src="#hotpoint" class="clickable" position="2 0.02 -2" rotation="-90 0 0" scale="0.3 0.3 0.3"></a-image>
+      <a-image src="#hotpoint" class="clickable" position="0 0.02 2" rotation="-90 0 0" scale="0.3 0.3 0.3"></a-image>
+      <a-image src="#hotpoint" class="clickable" position="-2 0.02 -2" rotation="-90 0 0" scale="0.3 0.3 0.3"></a-image>
 
-      <a-entity id="helpers" position="0 0 0" visible="true">
+      <!-- Helper - оси и плоскости -->
+      <a-entity id="helpers" position="0 0 0" visible="false">
         <a-plane rotation="0 0 0" width="20" height="20" material="color: yellow; opacity: 0.1" side="double"></a-plane>
         <a-plane rotation="0 90 0" width="20" height="20" material="color: red; opacity: 0.1" side="double"></a-plane>
         <a-plane rotation="90 0 0" width="20" height="20" material="color: blue; opacity: 0.1" side="double"></a-plane>
@@ -61,33 +132,49 @@
           color="blue"></a-cone>
       </a-entity>
 
-      <a-sphere position="4 0.5 0" radius="0.5" color="#ff0000" title="красный" opacity="0.5"></a-sphere>
-      <a-sphere position="-4 0.5 0" radius="0.5" color="#00ff00" title="зеленый"></a-sphere>
-      <a-sphere position="0 0.5 -4" radius="0.5" color="#0000ff" title="синий"></a-sphere>
-      <a-sphere position="0 0.5 4" radius="0.5" color="#ffff00" title="желтый"></a-sphere>
-
-      <!-- <a-entity rotation="0 0 0" position="0 2.5 8" title="на желтый">
-        <a-entity camera="active: true" wasd-controls="acceleration: 40"
-          look-controls="reverseMouseDrag: true"></a-entity>
+      <!-- 4 стены -->
+      <a-entity id="myroom" visible="true">
+        <a-box position="3 0 0" scale="0.1 1 5" color="#c17070"></a-box>
+        <a-box position="0 0 -3" scale="5 1 0.1" color="#70c1c1"></a-box>
+        <a-box position="-3 0 0" scale="0.1 1 5" color="#c2c070"></a-box>
+        <a-box position="0 0 3" scale="5 1 0.1" color="#7072c2"></a-box>
       </a-entity>
-      <a-entity rotation="0 90 0" position="8 2.5 0" title="на красный">
-        <a-entity camera="active: false" wasd-controls="acceleration: 40"
-          look-controls="reverseMouseDrag: true"></a-entity>
-      </a-entity>
-      <a-entity rotation="0 180 0" position="0 2.5 -8" title="на синий">
-        <a-entity camera="active: false" wasd-controls="acceleration: 40"
-          look-controls="reverseMouseDrag: true"></a-entity>
-      </a-entity>
-      <a-entity rotation="0 -90 0" position="-8 2.5 0" title="на зеленый">
-        <a-entity camera="active: false" wasd-controls="acceleration: 40"
-          look-controls="reverseMouseDrag: true"></a-entity>
-      </a-entity> -->
 
-      <!-- <a-camera user-height="1.6" look-controls="pointerLockEnabled:true;"></a-camera> -->
-      <a-camera user-height="1.6" wasd-controls="fly:true;" look-controls="pointerLockEnabled:true;"></a-camera>
+      <a-entity id="main-camera" wasd-rotate="speed:3" look-controls>
+        <!-- <a-camera><a-cursor></a-cursor></a-camera> -->
+        <a-camera wasd-controls="enabled:false;" look-controls="enabled:false;"></a-camera>
+        <!-- <a-camera wasd-controls="fly:true;" look-controls="pointerLockEnabled:true;"></a-camera> -->
+      </a-entity>
 
-      <!-- <a-entity text="value: Press enter to start; color: #BBB" position="0 2 -3" scale="4 4 4"></a-entity> -->
     </a-scene>
+
+    <script>
+      window.addEventListener("load", (evt) => {
+        var scene = document.querySelector('a-scene');
+
+        if (scene.hasLoaded) {
+          run();
+        } else {
+          scene.addEventListener('loaded', run);
+        }
+
+        function run() {
+          var points = document.querySelectorAll('.clickable');
+          var camera = document.querySelector('#main-camera');
+
+          points.forEach((point) => {
+            point.addEventListener('click', () => {
+              console.log('click');
+              var pos = Object.values(point.object3D.position).join(' ');
+              camera.setAttribute('animation', {
+                'property': 'position',
+                'to': {x: point.object3D.position.x, y: point.object3D.position.y, z: point.object3D.position.z}
+              });
+            });
+          });
+        }
+      });
+    </script>
   </body>
 
 </html>
